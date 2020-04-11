@@ -3,6 +3,8 @@ package com.exp.executorexp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 //https://www.callicoder.com/java-8-completablefuture-tutorial/
@@ -62,14 +64,14 @@ public class ExampleCFCallbacks {
         System.out.println(cf.get());
     }
 
-    public void testCallback2() throws Exception {
+    public void testCallback2(ExecutorService executors) throws Exception {
         CompletableFuture cf = CompletableFuture.supplyAsync(() -> {
 
-            return "Some Result:" + Thread.currentThread().getName();
-        }).thenApplyAsync(result -> {
+            return "Some Result:" + Thread.currentThread().isDaemon();
+        },executors).thenApplyAsync(result -> {
             // Executed in a different thread from ForkJoinPool.commonPool()
-            return result + " : Processed Result:" + Thread.currentThread().getName();
-        });
+            return result + " : Processed Result:" + Thread.currentThread().isDaemon();
+        },executors);
 
         // blocking call get()
         System.out.println(cf.get());
@@ -113,9 +115,11 @@ public class ExampleCFCallbacks {
         try {
             //ec.testCallback();
             //ec.testCallback1();
-            //ec.testCallback2();
+            ExecutorService executors = Executors.newFixedThreadPool(5);
+
+            ec.testCallback2(executors);
             //ec.testCompose1();
-            ec.testWrapperSupplyFunction();
+            //ec.testWrapperSupplyFunction();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
