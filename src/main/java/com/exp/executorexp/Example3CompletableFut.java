@@ -18,10 +18,7 @@ public class Example3CompletableFut {
             List<CompletableFuture<Integer>> LL = list.stream().map(num -> CompletableFuture.supplyAsync(()->getNumber(num))).collect(Collectors.toList());
 
             System.out.println(CompletableFuture.allOf(LL.toArray(new CompletableFuture[LL.size()]))
-                    .thenApply(v -> LL.stream()
-                            .map(CompletableFuture::join)
-                            .collect(Collectors.toList()))
-                    .join());
+                    .thenApply(v -> LL.stream().map(CompletableFuture::join).collect(Collectors.toList())).join());
 
         } catch (Exception e) {
             e.printStackTrace();
