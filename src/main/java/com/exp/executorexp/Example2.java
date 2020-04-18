@@ -10,10 +10,10 @@ import java.util.concurrent.Future;
 public class Example2 {
 
     public static void main(String[] args) {
-        ExecutorService executorService = Executors.newFixedThreadPool(3);
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
         List<Future> futs = new ArrayList<Future>();
-        Test1 tr = new Test1();
         for (int i = 0; i < 5; i++) {
+            Test1 tr = new Test1(i);
             futs.add(executorService.submit(tr));
         }
         for (Future fut : futs) {
@@ -29,11 +29,17 @@ public class Example2 {
 }
 
 class Test1 implements Callable {
+
+    int val;
+    public Test1(int val){
+        this.val = val;
+    }
+
     public Object call() throws Exception {
-        int val= (int) (Math.random() * 10D);
-        Thread.currentThread().setName(""+val);
-        System.out.println("Setting val: Thread" + Thread.currentThread().getName()  + " : Waiting for : " + val);
-        Thread.sleep(val*1000);
+        int val1= (int) (Math.random() * 10D);
+        Thread.currentThread().setName(this.val + ":"+val1);
+        System.out.println("Setting val: Thread" + Thread.currentThread().getName()  + " : Waiting for : " + val1);
+        Thread.sleep(val1*1000);
         return Thread.currentThread().getName();
     }
 }
